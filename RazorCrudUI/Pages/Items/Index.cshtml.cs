@@ -40,7 +40,9 @@ namespace RazorRepoUI.Pages.Items
 
             if (!string.IsNullOrEmpty(SearchString))
             {
-                itemList = itemList.Where(s => s.Name.Contains(SearchString));
+                
+                itemList = (IEnumerable<ItemModel>)await _repo.GetItemsBySearch(SearchString); //this might cause an issue with the cast
+                
             }
 
             if (ItemPriceMin.HasValue)
