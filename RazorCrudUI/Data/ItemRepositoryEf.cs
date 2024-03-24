@@ -27,9 +27,12 @@ namespace RazorRepoUI.Data
             return await _context.Items.Where(x => x.Name.Contains(filter)).ToListAsync();
         }
 
-        public Task AddItemAsync(ItemModel item)
+        public async Task InsertItemAsync(ItemModel item)
         {
-            throw new NotImplementedException();
+            item.CreatedAt = DateTime.UtcNow;
+            item.CreatedBy = Environment.UserName;
+            _context.Items.Add(item);
+            await _context.SaveChangesAsync();
         }
 
         public Task UpdateItemAsync(ItemModel item)

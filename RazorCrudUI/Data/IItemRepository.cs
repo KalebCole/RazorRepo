@@ -8,7 +8,7 @@ namespace RazorRepoUI.Data
         Task<ItemModel> GetItemByID(int id);
         Task<IEnumerable<ItemModel>> GetItemsBySearch(string filter);
 
-        Task AddItemAsync(ItemModel item);
+        Task InsertItemAsync(ItemModel item);
         Task UpdateItemAsync(ItemModel item);
 
         Task DeleteItemAsync(int id);

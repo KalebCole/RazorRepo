@@ -1,18 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using RazorRepoUI.Data;
 using RazorRepoUI.Models;
 
 namespace RazorRepoUI.Pages.Items
 {
     public class CreateModel : PageModel
     {
-        private readonly RazorRepoUI.Data.ItemsContext _context;
+        private readonly IItemRepository _repo;
 
-        // this is handled by the dependency injection system
-        // we will not see this being called, but it will be called by the system
-        public CreateModel(RazorRepoUI.Data.ItemsContext context)
+        public CreateModel(IItemRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         public IActionResult OnGet()
@@ -31,13 +30,7 @@ namespace RazorRepoUI.Pages.Items
             {
                 return Page();
             }
-            ItemModel.CreatedAt = DateTime.UtcNow;
-            ItemModel.CreatedBy = Environment.UserName;
-            // updating program representation of the database 
-            _context.Items.Add(ItemModel);
-            // where things get written to the database
-            await _context.SaveChangesAsync();
-
+            await _repo.InsertItemAsync(ItemModel);
             return RedirectToPage("./Index");
         }
     }

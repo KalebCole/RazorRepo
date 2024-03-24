@@ -40,9 +40,7 @@ namespace RazorRepoUI.Pages.Items
 
             if (!string.IsNullOrEmpty(SearchString))
             {
-                
-                itemList = (IEnumerable<ItemModel>)await _repo.GetItemsBySearch(SearchString); //this might cause an issue with the cast
-                
+                itemList = (IEnumerable<ItemModel>)await _repo.GetItemsBySearch(SearchString); // i switched to use the repo, which has the functionality
             }
 
             if (ItemPriceMin.HasValue)
