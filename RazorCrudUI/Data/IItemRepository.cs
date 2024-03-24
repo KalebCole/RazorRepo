@@ -5,7 +5,7 @@ namespace RazorRepoUI.Data
     public interface IItemRepository
     {
         Task<IEnumerable<ItemModel>> GetItemsAsync();
-        Task<ItemModel> GetItemByID(int id);
+        Task<ItemModel> GetItemByID(int? id);
         Task<IEnumerable<ItemModel>> GetItemsBySearch(string filter);
 
         Task InsertItemAsync(ItemModel item);

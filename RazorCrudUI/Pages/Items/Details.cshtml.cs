@@ -1,17 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using RazorRepoUI.Data;
 using RazorRepoUI.Models;
 
 namespace RazorRepoUI.Pages.Items
 {
     public class DetailsModel : PageModel
     {
-        private readonly RazorRepoUI.Data.ItemsContext _context;
+        private readonly IItemRepository _repo;
 
-        public DetailsModel(RazorRepoUI.Data.ItemsContext context)
+        public DetailsModel(IItemRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         public ItemModel ItemModel { get; set; } = default!;
@@ -24,7 +25,7 @@ namespace RazorRepoUI.Pages.Items
             }
 
             // IEnumerable passing a collection of items to make a list
-            var itemmodel = await _context.Items.FirstOrDefaultAsync(m => m.Id == id);
+            var itemmodel = await _repo.GetItemByID(id);
             if (itemmodel == null)
             {
                 return NotFound();
@@ -34,24 +35,6 @@ namespace RazorRepoUI.Pages.Items
                 ItemModel = itemmodel;
             }
             return Page();
-        }
-
-        public async Task<IActionResult> OnPostAsync(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            ItemModel = await _context.Items.FindAsync(id);
-
-            if (ItemModel != null)
-            {
-                _context.Items.Remove(ItemModel);
-                await _context.SaveChangesAsync();
-            }
-
-            return RedirectToPage("./Index");
         }
     }
 }

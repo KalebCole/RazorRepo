@@ -17,7 +17,7 @@ namespace RazorRepoUI.Data
             return await _context.Items.ToListAsync();
         }
 
-        public async Task<ItemModel> GetItemByID(int id)
+        public async Task<ItemModel> GetItemByID(int? id)
         {
             return await _context.Items.FirstOrDefaultAsync(x => x.Id == id);
         }
