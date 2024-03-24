@@ -44,6 +44,11 @@ namespace RazorRepoUI.Data
                 return false;
             }
 
+            if (dbItem.isDeleted)
+            {
+                return false;
+            }
+
             if (!(item.Name.Equals(dbItem.Name) && item.Description.Equals(dbItem.Description) && item.Price.Equals(dbItem.Price)))
             {
                 if (!item.Name.Equals(dbItem.Name))
@@ -63,13 +68,14 @@ namespace RazorRepoUI.Data
             {
                 await _context.SaveChangesAsync();
             }
-            // move this to the repository and make it a boolean return
+
             catch (DbUpdateConcurrencyException)
             {
                 // Handle the concurrency exception
                 var errorMessage = "The item you are trying to update has been modified by another user or process. Please refresh the page and try again.";
                 // Return the error message to the caller
                 throw new Exception(errorMessage);
+
             }
             return true;
         }
@@ -82,6 +88,18 @@ namespace RazorRepoUI.Data
                 itemModel.isDeleted = true;
                 _context.Items.Update(itemModel);
                 await _context.SaveChangesAsync();
+            }
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            // move this to the repository and make it a boolean return
+            catch (DbUpdateConcurrencyException)
+            {
+                // Handle the concurrency exception
+                var errorMessage = "The item you are trying to update has been modified by another user or process. Please refresh the page and try again.";
+                // Return the error message to the caller
+                throw new Exception(errorMessage);
             }
         }
 

@@ -42,28 +42,12 @@ namespace RazorRepoUI.Pages.Items
             {
                 return Page();
             }
-            var dbItem = await _repo.GetItemByID(ItemModel.Id);
-            if (dbItem == null)
+            var dbItem = await _repo.UpdateItemAsync(ItemModel);
+            if (dbItem == false)
             {
-                return NotFound();
+                ModelState.AddModelError(string.Empty, "Failed to update item.");
+                return Page();
             }
-
-            if (!(ItemModel.Name.Equals(dbItem.Name) && ItemModel.Description.Equals(dbItem.Description) && ItemModel.Price.Equals(dbItem.Price)))
-            {
-                if (!ItemModel.Name.Equals(dbItem.Name))
-                {
-                    dbItem.Name = ItemModel.Name;
-                }
-                if (!ItemModel.Description.Equals(dbItem.Description))
-                {
-                    dbItem.Description = ItemModel.Description;
-                }
-                if (ItemModel.Price != dbItem.Price)
-                {
-                    dbItem.Price = ItemModel.Price;
-                }
-            }
-
             return RedirectToPage("./Index");
         }
     }
