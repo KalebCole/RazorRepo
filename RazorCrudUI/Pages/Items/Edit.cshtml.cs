@@ -1,30 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using RazorRepoUI.Data;
 using RazorRepoUI.Models;
 
 namespace RazorRepoUI.Pages.Items
 {
     public class EditModel : PageModel
     {
-        private readonly RazorRepoUI.Data.ItemsContext _context;
+        private readonly IItemRepository _repo;
 
-        public EditModel(RazorRepoUI.Data.ItemsContext context)
+        public EditModel(IItemRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         [BindProperty]
         public ItemModel ItemModel { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var itemmodel = await _context.Items.FirstOrDefaultAsync(m => m.Id == id);
+            var itemmodel = await _repo.GetItemByID(id);
             if (itemmodel == null)
             {
                 return NotFound();
@@ -41,7 +42,7 @@ namespace RazorRepoUI.Pages.Items
             {
                 return Page();
             }
-            var dbItem = await _context.Items.FirstOrDefaultAsync(item => item.Id == ItemModel.Id);
+            var dbItem = await _repo.GetItemByID(ItemModel.Id);
             if (dbItem == null)
             {
                 return NotFound();
@@ -63,29 +64,7 @@ namespace RazorRepoUI.Pages.Items
                 }
             }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            // move this to the repository and make it a boolean return
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ItemModelExists(ItemModel.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
             return RedirectToPage("./Index");
-        }
-
-        private bool ItemModelExists(int id)
-        {
-            return _context.Items.Any(e => e.Id == id);
         }
     }
 }

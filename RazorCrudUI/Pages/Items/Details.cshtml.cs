@@ -17,7 +17,7 @@ namespace RazorRepoUI.Pages.Items
 
         public ItemModel ItemModel { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             if (id == null)
             {
