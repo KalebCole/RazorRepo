@@ -1,30 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using RazorRepoUI.Data;
 using RazorRepoUI.Models;
 
 namespace RazorRepoUI.Pages.Items
 {
     public class DeleteModel : PageModel
     {
-        private readonly RazorRepoUI.Data.ItemsContext _context;
+        private readonly IItemRepository _repo;
 
-        public DeleteModel(RazorRepoUI.Data.ItemsContext context)
+        public DeleteModel(IItemRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         [BindProperty]
         public ItemModel ItemModel { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var itemmodel = await _context.Items.FirstOrDefaultAsync(m => m.Id == id);
+            var itemmodel = await _repo.GetItemByID(id);
 
             if (itemmodel == null)
             {
@@ -37,20 +38,14 @@ namespace RazorRepoUI.Pages.Items
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public async Task<IActionResult> OnPostAsync(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var itemModel = await _context.Items.FindAsync(id);
-            if (itemModel != null)
-            {
-                itemModel.isDeleted = true;
-                _context.Items.Update(itemModel);
-                await _context.SaveChangesAsync();
-            }
+            await _repo.DeleteItemAsync(id);
 
             return RedirectToPage("./Index");
         }

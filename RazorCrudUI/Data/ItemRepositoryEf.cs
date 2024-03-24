@@ -40,9 +40,15 @@ namespace RazorRepoUI.Data
             throw new NotImplementedException();
         }
 
-        public Task DeleteItemAsync(int id)
+        public async Task DeleteItemAsync(int id)
         {
-            throw new NotImplementedException();
+            var itemModel =  await _context.Items.FindAsync(id);
+            if (itemModel != null)
+            {
+                itemModel.isDeleted = true;
+                _context.Items.Update(itemModel);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public Task<IEnumerable<ItemModel>> GetItemsByPriceAsync(decimal minPrice, decimal maxPrice)
