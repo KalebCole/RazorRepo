@@ -36,20 +36,20 @@ namespace RazorRepoUI.Pages.Items
         public async Task OnGetAsync()
         {
             var items = await _repo.GetItemsAsync();
-            var itemList = items.ToList().Where(x => x.isDeleted == false);
+            var itemList = items.ToList();
 
             if (!string.IsNullOrEmpty(SearchString))
             {
-                itemList = (IEnumerable<ItemModel>)await _repo.GetItemsBySearch(SearchString); // i switched to use the repo, which has the functionality
+                itemList = (List<ItemModel>)await _repo.GetItemsBySearch(SearchString);
             }
 
             if (ItemPriceMin.HasValue)
             {
-                itemList = itemList.Where(x => x.Price >= ItemPriceMin);
+                itemList = itemList.Where(x => x.Price >= ItemPriceMin).ToList();
             }
             if (ItemPriceMax.HasValue)
             {
-                itemList = itemList.Where(x => x.Price <= ItemPriceMax);
+                itemList = itemList.Where(x => x.Price <= ItemPriceMax).ToList();
             }
 
             ItemModel = await Task.Run(() => itemList.ToList());

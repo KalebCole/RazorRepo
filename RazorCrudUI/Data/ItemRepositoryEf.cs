@@ -15,7 +15,7 @@ namespace RazorRepoUI.Data
 
         public async Task<IEnumerable<ItemModel>> GetItemsAsync()
         {
-            return await _context.Items.ToListAsync();
+            return await _context.Items.Where(x => x.isDeleted == false).ToListAsync();
         }
 
         public async Task<ItemModel> GetItemByID(int id)
@@ -64,43 +64,32 @@ namespace RazorRepoUI.Data
                     dbItem.Price = item.Price;
                 }
             }
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
 
-            catch (DbUpdateConcurrencyException)
-            {
-                // Handle the concurrency exception
-                var errorMessage = "The item you are trying to update has been modified by another user or process. Please refresh the page and try again.";
-                // Return the error message to the caller
-                throw new Exception(errorMessage);
+            await _context.SaveChangesAsync(); //things that have a changed state will be updated
 
-            }
+
+
             return true;
         }
 
-        public async Task DeleteItemAsync(int id)
+        public async Task<bool> DeleteItemAsync(int id)
         {
-            var itemModel =  await _context.Items.FindAsync(id);
-            if (itemModel != null)
+            var itemModel = await GetItemByID(id);
+            if (itemModel == null)
             {
-                itemModel.isDeleted = true;
-                _context.Items.Update(itemModel);
-                await _context.SaveChangesAsync();
+                return false;
             }
-            try
+            //find the item in the db and see if the item model matches the item model in the db
+            var dbItem = await GetItemByID(id);
+            if (!itemModel.Equals(dbItem))
             {
-                await _context.SaveChangesAsync();
+                return false;
             }
-            // move this to the repository and make it a boolean return
-            catch (DbUpdateConcurrencyException)
-            {
-                // Handle the concurrency exception
-                var errorMessage = "The item you are trying to update has been modified by another user or process. Please refresh the page and try again.";
-                // Return the error message to the caller
-                throw new Exception(errorMessage);
-            }
+
+            itemModel.isDeleted = true;
+            _context.Items.Update(itemModel);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public Task<IEnumerable<ItemModel>> GetItemsByPriceAsync(decimal minPrice, decimal maxPrice)
