@@ -25,7 +25,7 @@ namespace RazorRepoUI.Pages.Items
             }
 
             // IEnumerable passing a collection of items to make a list
-            var itemmodel = await _repo.GetItemByID(id);
+            var itemmodel = await _repo.GetItemByIDAsync(id);
             if (itemmodel == null)
             {
                 return NotFound();

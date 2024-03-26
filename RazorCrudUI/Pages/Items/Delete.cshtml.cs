@@ -25,7 +25,7 @@ namespace RazorRepoUI.Pages.Items
                 return NotFound();
             }
 
-            var itemmodel = await _repo.GetItemByID(id);
+            var itemmodel = await _repo.GetItemByIDAsync(id);
 
             if (itemmodel == null)
             {
@@ -45,7 +45,12 @@ namespace RazorRepoUI.Pages.Items
                 return NotFound();
             }
 
-            await _repo.DeleteItemAsync(id);
+            var isDeleted = await _repo.DeleteItemAsync(id);
+            if (isDeleted == false)
+            {
+                ModelState.AddModelError(string.Empty, "Failed to delete item.");
+                return Page();
+            }
 
             return RedirectToPage("./Index");
         }

@@ -13,17 +13,17 @@ namespace RazorRepoUI.Data
             _context = context;
         }
 
-        public async Task<IEnumerable<ItemModel>> GetItemsAsync()
+        public async Task<IEnumerable<ItemModel?>> GetItemsAsync()
         {
             return await _context.Items.Where(x => x.isDeleted == false).ToListAsync();
         }
 
-        public async Task<ItemModel> GetItemByID(int id)
+        public async Task<ItemModel?> GetItemByIDAsync(int id)
         {
             return await _context.Items.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<IEnumerable<ItemModel>> GetItemsBySearch(string filter)
+        public async Task<IEnumerable<ItemModel>> GetItemsBySearchAsync(string filter)
         {
             return await _context.Items.Where(x => x.Name.Contains(filter) && x.isDeleted == false).ToListAsync();
         }
@@ -38,7 +38,7 @@ namespace RazorRepoUI.Data
 
         public async Task<bool> UpdateItemAsync(ItemModel item)
         {
-            var dbItem = await GetItemByID(item.Id);
+            var dbItem = await GetItemByIDAsync(item.Id);
             if (dbItem == null)
             {
                 return false;
@@ -74,13 +74,13 @@ namespace RazorRepoUI.Data
 
         public async Task<bool> DeleteItemAsync(int id)
         {
-            var itemModel = await GetItemByID(id);
+            var itemModel = await GetItemByIDAsync(id);
             if (itemModel == null)
             {
                 return false;
             }
             //find the item in the db and see if the item model matches the item model in the db
-            var dbItem = await GetItemByID(id);
+            var dbItem = await GetItemByIDAsync(id);
             if (!itemModel.Equals(dbItem))
             {
                 return false;

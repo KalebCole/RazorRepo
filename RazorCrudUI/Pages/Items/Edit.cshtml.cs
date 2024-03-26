@@ -18,20 +18,23 @@ namespace RazorRepoUI.Pages.Items
         [BindProperty]
         public ItemModel ItemModel { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int id)
+        public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var itemmodel = await _repo.GetItemByID(id);
+            var itemmodel = await _repo.GetItemByIDAsync(id.Value);
             if (itemmodel == null)
             {
                 return NotFound();
             }
             ItemModel = itemmodel;
-            return Page();
+            return Page(); //has references to the properties of the ItemModel
+            // this is the same as return View(ItemModel);
+            // View is a method that returns a view result
+            // 
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.

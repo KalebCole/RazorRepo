@@ -40,7 +40,7 @@ namespace RazorRepoUI.Pages.Items
 
             if (!string.IsNullOrEmpty(SearchString))
             {
-                itemList = (List<ItemModel>)await _repo.GetItemsBySearch(SearchString);
+                itemList = (List<ItemModel>)await _repo.GetItemsBySearchAsync(SearchString);
             }
 
             if (ItemPriceMin.HasValue)
